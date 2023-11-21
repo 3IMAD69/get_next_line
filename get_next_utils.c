@@ -6,7 +6,7 @@
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 18:50:12 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/20 20:06:28 by idhaimy          ###   ########.fr       */
+/*   Updated: 2023/11/21 09:32:54 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,9 @@ void add_to_list(t_list **lst,char *buffer)
 		*lst = newnode;
 	else
 		last_node->next = newnode;
+	newnode->str = ft_strdup(buffer);
+	if (newnode->str == NULL)
+		return (NULL);
+	newnode->next = NULL;
 	return (newnode);
 }
