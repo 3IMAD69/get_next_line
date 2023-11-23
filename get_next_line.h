@@ -6,7 +6,7 @@
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 09:45:09 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/23 13:09:54 by idhaimy          ###   ########.fr       */
+/*   Updated: 2023/11/23 16:27:17 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5 
+#  define BUFFER_SIZE 15 
 # endif
 
 # include <fcntl.h>

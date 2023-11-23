@@ -6,7 +6,7 @@
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 12:18:52 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/23 15:40:03 by idhaimy          ###   ########.fr       */
+/*   Updated: 2023/11/23 16:43:21 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ char	*get_next_line(int fd)
 	if (lst == NULL)
 		return (NULL);
 	line = get_line(lst);
-	//printLinkedList(lst);
 	freelst(&lst);
+	 //printLinkedList(lst);
 	return (line);
 }
 
@@ -86,9 +86,9 @@ int	main(void)
 	char *str1 = get_next_line(fd);
 	char *str2 = get_next_line(fd);
 	char *str3 = get_next_line(fd);
-	//printf("%s",str1);
-	//printf("%s",str2);
-	//printf("%s",str3);
+	printf("%s",str1);
+	printf("%s",str2);
+	printf("%s",str3);
 
 	//system("leaks a.out");
 }

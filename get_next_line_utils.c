@@ -6,7 +6,7 @@
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 18:50:12 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/23 15:40:17 by idhaimy          ###   ########.fr       */
+/*   Updated: 2023/11/23 17:05:29 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ void copy_line_to_str(char *next_str,t_list *lst)
 		lst = lst->next;
 	}
 	next_str[k] = '\0';
-	printf("+%s+",next_str);
 }
 
 char *get_line(t_list *lst)
@@ -142,7 +141,7 @@ void freelst(t_list **lst)
 	last_node = ft_lstlast(*lst);
 	while (last_node->str[i] && last_node->str[i] != '\n')
 		i++;
-	while (last_node->str[i] && (i++))
+	while (last_node->str[i] && last_node->str[++i])
 		tmp_str[j++] = last_node->str[i];
 	tmp_str[j] = '\0';
 	newlist->str = tmp_str;
