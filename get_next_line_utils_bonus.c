@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*    get_next_line_utils_bonus.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/20 18:50:12 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/24 17:01:56 by idhaimy          ###   ########.fr       */
+/*   Created: 2023/11/24 16:43:06 by idhaimy           #+#    #+#             */
+/*   Updated: 2023/11/24 19:24:33 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
+#include "get_next_line_bonus.h"
 
 int count_my_line(t_list *lst)
 {
@@ -73,7 +72,6 @@ void	free_all(t_list *newnode, char *buf,t_list **list)
 		*list = tmp;
 	}
 	*list = NULL;
-	
 	if (newnode->str[0])
 		*list = newnode;
 	else
@@ -107,4 +105,3 @@ void clearlst(t_list **lst)
 	newnode->next = NULL;
 	free_all(newnode, newstr, lst);
 }
-

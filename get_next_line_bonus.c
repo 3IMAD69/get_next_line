@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/20 12:18:52 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/24 17:14:45 by idhaimy          ###   ########.fr       */
+/*   Created: 2023/11/24 16:42:05 by idhaimy           #+#    #+#             */
+/*   Updated: 2023/11/24 19:28:03 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 t_list *ft_lstlast(t_list *lst)
 {
@@ -95,30 +95,30 @@ char *get_linee(t_list *lst)
 
 char	*get_next_line(int fd)
 {
-	static t_list	*lst = NULL;
+	static t_list	*lst[256];
 	char			*line;
-	t_list	*tmp;
+	t_list *tmp;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 )//|| read(fd, &line, 0) < 0
+	if (fd < 0 || fd > 255 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (read(fd, &line, 0) < 0)
 	{
-		while (lst)
+		while (lst[fd])
 		{
-			tmp = lst->next;
-			free(lst->str);
-			free(lst);
-			lst = tmp;
+			tmp = lst[fd]->next;
+			free(lst[fd]->str);
+			free(lst[fd]);
+			lst[fd] = tmp;
 		}
-		lst = NULL;
+		lst[fd] = NULL;
 		return NULL;
 	}	
-	read_to_list(&lst,fd);
-	if (!lst)
+	read_to_list(&lst[fd],fd);
+	if (!lst[fd])
 		return (NULL);
-	line = get_linee(lst);
+	line = get_linee(lst[fd]);
 
-	clearlst(&lst);
+	clearlst(&lst[fd]);
 	return (line);
 }
 
@@ -127,17 +127,16 @@ char	*get_next_line(int fd)
 // int	main(void)
 // {
 // 	int fd = open("text.txt", O_RDONLY);
-// 	char *str1 = get_next_line(fd);
-// 	char *str2 = get_next_line(fd);
-// 	char *str3 = get_next_line(fd);
-// 	printf("%s",str1);
-// 	printf("%s",str2);
-// 	printf("%s",str3);
-// 	free(str1);
-// 	free(str2);
-// 	free(str3);
+// 	int fd2 = open("text2.txt", O_RDONLY);
+// 	printf("%s",get_next_line(fd)); // 1 file 1
+// 	printf("%s",get_next_line(fd2)); // 1 file 2
+// 	printf("%s",get_next_line(fd)); // 2 file 1
+// 	printf("%s",get_next_line(fd2)); // 2 file 2
+// 	printf("%s",get_next_line(fd));  // 3 file 1
+// 	printf("%s",get_next_line(fd2)); // 3 file 2
+    
 // 	close(fd);
+// 	close(fd2);
 
 // 	//system("leaks a.out");
 // }
-
