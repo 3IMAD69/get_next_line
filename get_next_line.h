@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 15 
+#  define BUFFER_SIZE 10
 # endif
 
 # include <fcntl.h>
@@ -28,12 +28,16 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
-int found_newline(t_list *lst);
+char	*get_next_line(int fd);
 char *get_line(t_list *lst);
-void copy_line_to_str(char *next_str,t_list *lst);
-t_list	*ft_lstlast(t_list *lst);
-void add_to_list(t_list **lst,char *buffer);
-void freelst(t_list **lst);
-void clearlst(t_list **lst,t_list *newlist, char *tmp_buffer);
+void read_to_list(t_list **lst, int fd);
+void add_buffer_to_list(t_list **lst,char *buffer);
+t_list *ft_lstlast(t_list *lst);
+int count_my_line(t_list *lst);
+void copy_lstline(t_list *lst,char *line);
+void clearlst(t_list **lst);
+void	free_all(t_list *clean_node, char *buf,t_list **list);
+
+
 
 #endif

@@ -12,65 +12,14 @@
 
 #include "get_next_line.h"
 
-int	found_newline(t_list *lst)
-{
-	int	i;
-
-	if (lst == NULL)
-		return (0);
-	while (lst)
-	{
-		i = 0;
-		while (lst->str[i] && i < BUFFER_SIZE)
-		{
-			if (lst->str[i] == '\n')
-				return (1);
-			++i;
-		}
-		lst = lst->next;
-	}
-	return (0);
-}
-t_list	*ft_lstlast(t_list *lst)
-{
-	if (!lst)
-		return (NULL);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
-}
-
 
 int count_my_line(t_list *lst)
 {
-	int count;
+	int len;
 	int i;
 
-	count = 0;
-	while (lst)
-	{
-		i = 0;
-		while(lst->str[i])
-		{
-			if (lst->str[i] != '\n')
-			{
-				count++;
-				return (count);
-			}
-			count++;
-			i++;
-		}
-		lst = lst->next;
-	}
-	return (count);
-}
-
-void copy_line_to_str(char *next_str,t_list *lst)
-{
-	int i;
-	int k;
-	
-	k = 0;
+	//lst == null
+	len = 0;
 	while (lst)
 	{
 		i = 0;
@@ -78,76 +27,84 @@ void copy_line_to_str(char *next_str,t_list *lst)
 		{
 			if (lst->str[i] == '\n')
 			{
-				next_str[k++] = '\n';
-				next_str[k] = '\0';
-				return ;
+				len++;
+				return (len);
 			}
-			next_str[k++] = lst->str[i++]; 
+			len++;
+			i++;
 		}
 		lst = lst->next;
 	}
-	next_str[k] = '\0';
+	return (len);
 }
 
-char *get_line(t_list *lst)
+void copy_lstline(t_list *lst,char *line)
 {
-	size_t line_len;
-	char *next_str;
+	int i;
+	int j;
 
-	line_len = count_my_line(lst);
-	next_str = (char *)malloc(sizeof(char) * (line_len + 1));
-	if (next_str == NULL)
-		return (NULL);
-	copy_line_to_str(next_str,lst);
-	return (next_str);
+	j = 0;
+	while (lst)
+	{
+		i = 0;
+		while (lst->str[i])
+		{
+			if(lst->str[i] == '\n')
+			{
+				line[j++] = '\n';
+				line[j] = '\0';
+				return ;
+			}
+
+			line[j++] = lst->str[i++];
+		}
+		lst = lst->next;
+	}
+	line[j] = '\0'; 
 }
-
-void clearlst(t_list **lst,t_list *newlist, char *tmp_buffer)
+void	free_all(t_list *newnode, char *buf,t_list **list)
 {
-	t_list *tmp;
+	t_list	*tmp;
 
-	while (*lst)
+	while (*list)
 	{
-		tmp = (*lst)->next;
-		free((*lst)->str);
-		free((*lst));
-		*lst = tmp;
+		tmp = (*list)->next;
+		free((*list)->str);
+		free(*list);
+		*list = tmp;
 	}
-	*lst = NULL;
-	if (newlist->str[0] == '\0')
-	{
-		free(newlist->str);
-		free(newlist);
-	}
+	*list = NULL;
+	if (newnode->str[0])
+		*list = newnode;
 	else
-		*lst = newlist;
+	{
+		free(buf);
+		free(newnode);
+	}
 }
 
-
-void freelst(t_list **lst)
+void clearlst(t_list **lst)
 {
-	t_list *newlist;
-	t_list *last_node;
-	char *tmp_str;
+	t_list *newnode;
+	t_list *lastnode;
+	char *newstr;
 	int i;
 	int j;
 
 	i = 0;
 	j = 0;
-	tmp_str = (char *)malloc(BUFFER_SIZE + 1);
-	newlist = (t_list *)malloc(sizeof(t_list));
-	if (!newlist || !tmp_str)
+	newstr = (char *)malloc((sizeof(char) * BUFFER_SIZE) + 1);
+	newnode = (t_list *)malloc(sizeof(t_list));
+	if (!newstr || !newnode)
 		return ;
-	last_node = ft_lstlast(*lst);
-	while (last_node->str[i] && last_node->str[i] != '\n')
+	lastnode = ft_lstlast(*lst);
+	while (lastnode->str[i] && lastnode->str[i] != '\n')
 		i++;
-	while (last_node->str[i] && last_node->str[++i])
-		tmp_str[j++] = last_node->str[i];
-	tmp_str[j] = '\0';
-	newlist->str = tmp_str;
-	newlist->next = NULL;
-	//free the original lst hna 
-	clearlst(lst,newlist,tmp_str);
+	while (lastnode->str[i] && lastnode->str[++i])
+		newstr[j++] = lastnode->str[i];
+	newstr[j] = '\0';
+	newnode->str = newstr;
+	newnode->next = NULL;
+	free_all(newnode, newstr, lst);
 }
-
 

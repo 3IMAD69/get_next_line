@@ -11,57 +11,88 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <string.h>
 
-void add_to_list(t_list **lst,char *buffer)
+t_list *ft_lstlast(t_list *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+void add_buffer_to_list(t_list **lst,char *buffer)
 {
 	t_list *newnode;
-	t_list *last_node;
+	t_list *lastnode;
 
-	last_node = ft_lstlast(*lst);
+	lastnode = ft_lstlast(*lst);
 	newnode = (t_list *)malloc(sizeof(t_list));
 	if (!newnode)
 		return ;
-	if (!last_node)
+	if (!lastnode)
 		*lst = newnode;
 	else
-		last_node->next = newnode;
+		lastnode->next = newnode;
 	newnode->str = buffer;
 	newnode->next = NULL;
 }
-void printLinkedList(t_list *head) {
-    t_list *current = head;
 
-    while (current != NULL) {
-        printf("%s ", current->str);
-        current = current->next;
-    }
+int	found_newline(t_list *lst)
+{
+	int	i;
 
-    printf("\n");
+	if (NULL == lst)
+		return (0);
+	while (lst)
+	{
+		i = 0;
+		while (lst->str[i] && i < BUFFER_SIZE)
+		{
+			if (lst->str[i] == '\n')
+				return (1);
+			++i;
+		}
+		lst = lst->next;
+	}
+	return (0);
 }
 
-void read_and_stock(int fd, t_list **lst)
+void read_to_list(t_list **lst, int fd)
 {
-	int		char_read;	
-	char	*buffer;
+	char *buffer;
+	int byte_read;
 
-	while (!found_newline(*lst))
+	while(!found_newline(*lst))
 	{
-		buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-		if (buffer == NULL)
+		buffer = (char *)malloc((sizeof(char) * BUFFER_SIZE) + 1);
+		if (!buffer)
 			return ;
-		char_read = read(fd, buffer, BUFFER_SIZE);
-		if (!char_read)
+		byte_read = read(fd,buffer,BUFFER_SIZE);
+		if (!byte_read)
 		{
-			free(buffer);
+			free (buffer);
 			return ;
 		}
-		buffer[char_read] = '\0';
-		add_to_list(lst, buffer);
-		//printf("bytes Readed %d\n",char_read);
+		buffer[byte_read] = '\0';
+		add_buffer_to_list(lst,buffer);
 	}
+
 }
 
+char *get_line(t_list *lst)
+{
+	char *myline;
+	int line_count;
+
+	// check if lst is null 
+	line_count = count_my_line(lst);
+	myline = (char *)malloc((sizeof(char) * line_count )+ 1);
+	if (!myline)
+		return (NULL);
+	copy_lstline(lst,myline);
+	return (myline);
+}
 
 char	*get_next_line(int fd)
 {
@@ -70,14 +101,15 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
 		return (NULL);
-	read_and_stock(fd,&lst);
-	if (lst == NULL)
+	read_to_list(&lst,fd);
+	if (!lst)
 		return (NULL);
 	line = get_line(lst);
-	freelst(&lst);
-	 //printLinkedList(lst);
+
+	clearlst(&lst);
 	return (line);
 }
+
 
 
 int	main(void)
@@ -89,6 +121,10 @@ int	main(void)
 	printf("%s",str1);
 	printf("%s",str2);
 	printf("%s",str3);
+	free(str1);
+	free(str2);
+	free(str3);
+	close(fd);
 
 	//system("leaks a.out");
 }
