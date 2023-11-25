@@ -6,25 +6,16 @@
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 16:42:05 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/24 19:28:03 by idhaimy          ###   ########.fr       */
+/*   Updated: 2023/11/25 15:07:31 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-t_list *ft_lstlast(t_list *lst)
+void	add_buffer_to_list(t_list **lst, char *buffer)
 {
-	if (!lst)
-		return (NULL);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
-}
-
-void add_buffer_to_list(t_list **lst,char *buffer)
-{
-	t_list *newnode;
-	t_list *lastnode;
+	t_list	*newnode;
+	t_list	*lastnode;
 
 	lastnode = ft_lstlast(*lst);
 	newnode = (t_list *)malloc(sizeof(t_list));
@@ -47,7 +38,7 @@ int	found_newline(t_list *lst)
 	while (lst)
 	{
 		i = 0;
-		while (lst->str[i] && i < BUFFER_SIZE)
+		while (lst->str[i])
 		{
 			if (lst->str[i] == '\n')
 				return (1);
@@ -58,38 +49,37 @@ int	found_newline(t_list *lst)
 	return (0);
 }
 
-void read_to_list(t_list **lst, int fd)
+void	read_to_list(t_list **lst, int fd)
 {
-	char *buffer;
-	int byte_read;
+	char	*buffer;
+	ssize_t	byte_read;
 
-	while(!found_newline(*lst))
+	while (!found_newline(*lst))
 	{
 		buffer = (char *)malloc((sizeof(char) * BUFFER_SIZE) + 1);
 		if (!buffer)
 			return ;
-		byte_read = read(fd,buffer,BUFFER_SIZE);
-		if (!byte_read)
+		byte_read = read(fd, buffer, BUFFER_SIZE);
+		if (!byte_read || byte_read == -1)
 		{
-			free (buffer);
+			free(buffer);
 			return ;
 		}
 		buffer[byte_read] = '\0';
-		add_buffer_to_list(lst,buffer);
+		add_buffer_to_list(lst, buffer);
 	}
-
 }
 
-char *get_linee(t_list *lst)
+char	*get_linee(t_list *lst)
 {
-	char *myline;
-	int line_count;
+	char	*myline;
+	int		line_count;
 
 	line_count = count_my_line(lst);
-	myline = (char *)malloc((sizeof(char) * line_count )+ 1);
+	myline = (char *)malloc((sizeof(char) * line_count) + 1);
 	if (!myline)
 		return (NULL);
-	copy_lstline(lst,myline);
+	copy_lstline(lst, myline);
 	return (myline);
 }
 
@@ -97,9 +87,9 @@ char	*get_next_line(int fd)
 {
 	static t_list	*lst[256];
 	char			*line;
-	t_list *tmp;
+	t_list			*tmp;
 
-	if (fd < 0 || fd > 255 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd > 255 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 0x7fffffff)
 		return (NULL);
 	if (read(fd, &line, 0) < 0)
 	{
@@ -111,32 +101,36 @@ char	*get_next_line(int fd)
 			lst[fd] = tmp;
 		}
 		lst[fd] = NULL;
-		return NULL;
-	}	
-	read_to_list(&lst[fd],fd);
+		return (NULL);
+	}
+	read_to_list(&lst[fd], fd);
 	if (!lst[fd])
 		return (NULL);
 	line = get_linee(lst[fd]);
-
 	clearlst(&lst[fd]);
 	return (line);
 }
 
-
-
-// int	main(void)
+// #include <stdio.h>
+// int main()
 // {
-// 	int fd = open("text.txt", O_RDONLY);
-// 	int fd2 = open("text2.txt", O_RDONLY);
-// 	printf("%s",get_next_line(fd)); // 1 file 1
-// 	printf("%s",get_next_line(fd2)); // 1 file 2
-// 	printf("%s",get_next_line(fd)); // 2 file 1
-// 	printf("%s",get_next_line(fd2)); // 2 file 2
-// 	printf("%s",get_next_line(fd));  // 3 file 1
-// 	printf("%s",get_next_line(fd2)); // 3 file 2
-    
-// 	close(fd);
-// 	close(fd2);
+// 	char *line1;
+// 	char *line2;
+// 	int fd1 = open("text.txt",O_RDONLY);
+// 	int fd2 = open("text2.txt",O_RDONLY);
 
-// 	//system("leaks a.out");
+// 	while ((line1 = get_next_line(fd1)) != NULL
+// 		|| (line2 = get_next_line(fd2)) != NULL)
+// 	{
+// 		if (line1 != NULL)
+// 		{
+// 			printf("from file 1\n %s",line1);
+// 			free(line1);
+// 		}
+// 		if (line2 != NULL)
+// 		{
+// 			printf("from file 2\n %s",line2);
+// 			free(line2);
+// 		}
+// 	}
 // }

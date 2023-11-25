@@ -6,17 +6,25 @@
 /*   By: idhaimy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 18:50:12 by idhaimy           #+#    #+#             */
-/*   Updated: 2023/11/24 17:01:56 by idhaimy          ###   ########.fr       */
+/*   Updated: 2023/11/25 10:45:57 by idhaimy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-
-int count_my_line(t_list *lst)
+t_list	*ft_lstlast(t_list *lst)
 {
-	int len;
-	int i;
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+int	count_my_line(t_list *lst)
+{
+	int	len;
+	int	i;
 
 	len = 0;
 	while (lst)
@@ -37,10 +45,10 @@ int count_my_line(t_list *lst)
 	return (len);
 }
 
-void copy_lstline(t_list *lst,char *line)
+void	copy_lstline(t_list *lst, char *line)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	j = 0;
 	while (lst)
@@ -48,20 +56,20 @@ void copy_lstline(t_list *lst,char *line)
 		i = 0;
 		while (lst->str[i])
 		{
-			if(lst->str[i] == '\n')
+			if (lst->str[i] == '\n')
 			{
 				line[j++] = '\n';
 				line[j] = '\0';
 				return ;
 			}
-
 			line[j++] = lst->str[i++];
 		}
 		lst = lst->next;
 	}
-	line[j] = '\0'; 
+	line[j] = '\0';
 }
-void	free_all(t_list *newnode, char *buf,t_list **list)
+
+void	free_all(t_list *newnode, char *buf, t_list **list)
 {
 	t_list	*tmp;
 
@@ -73,23 +81,22 @@ void	free_all(t_list *newnode, char *buf,t_list **list)
 		*list = tmp;
 	}
 	*list = NULL;
-	
-	if (newnode->str[0])
-		*list = newnode;
-	else
+	if (!newnode->str[0])
 	{
 		free(buf);
 		free(newnode);
 	}
+	else
+		*list = newnode;
 }
 
-void clearlst(t_list **lst)
+void	clearlst(t_list **lst)
 {
-	t_list *newnode;
-	t_list *lastnode;
-	char *newstr;
-	int i;
-	int j;
+	t_list	*newnode;
+	t_list	*lastnode;
+	char	*newstr;
+	int		i;
+	int		j;
 
 	i = 0;
 	j = 0;
@@ -107,4 +114,3 @@ void clearlst(t_list **lst)
 	newnode->next = NULL;
 	free_all(newnode, newstr, lst);
 }
-
